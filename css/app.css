@@ -370,12 +370,13 @@ progress.low::-moz-progress-bar { background: var(--rose); }
   25% { transform: translateX(-6px); }
   75% { transform: translateX(6px); }
 }
+/* Pas de majuscules forcées : l'étiquette porte des formules, et `d` et `t`
+   de V = d / t ne sont pas des D et des T. */
 .q-tag {
   color: var(--cyan);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
+  letter-spacing: .08em;
 }
 .q-text {
   font-size: 26px;
@@ -570,7 +571,7 @@ progress.low::-moz-progress-bar { background: var(--rose); }
   justify-content: space-between;
   gap: 8px;
 }
-.recap b { color: var(--ok); font-family: var(--mono); }
+.recap b { color: var(--ok); }
 .recap s { color: var(--rose); }
 .recap em { color: var(--dim); font-style: normal; font-size: 12px; white-space: nowrap; }
 .recap .stem { color: var(--cream); }

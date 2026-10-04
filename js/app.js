@@ -112,9 +112,8 @@ function paintBumpers() {
     $('b' + i).classList.toggle('on', (s % 3 === 0 && s > 0) ? true : (s % 3) > i);
   }
   const m = $('multi');
-  if (s >= 9) { m.textContent = '×3'; m.classList.add('on'); }
-  else if (s >= 5) { m.textContent = '×2'; m.classList.add('on'); }
-  else m.classList.remove('on');
+  m.textContent = s >= 9 ? '×3' : '×2';
+  m.classList.toggle('on', s >= 5);
 }
 const mult = () => (G.streak >= 9 ? 3 : G.streak >= 5 ? 2 : 1);
 
@@ -304,6 +303,7 @@ function begin(queue) {
 function finish() {
   G.running = false;
   clearInterval(timer);
+  $('choices').replaceChildren();
   $('play').classList.add('hide');
   $('over').classList.remove('hide');
 
