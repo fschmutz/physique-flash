@@ -59,8 +59,9 @@
       <circle cx="140" cy="35" r="7" fill="#2BD9D2"/>
       <circle cx="256" cy="84" r="7" fill="#FFC93C"/>
 
-      <text x="140" y="128" text-anchor="middle" font-family="Impact, Haettenschweiler, sans-serif"
-            font-size="36" fill="url(#gWord)" letter-spacing="2">PHYSIQUE</text>
+      <!-- Impact n'existe pas partout : le repli garde un mot épais. -->
+      <text x="140" y="128" text-anchor="middle" font-family="Impact, Haettenschweiler, 'Arial Black', sans-serif"
+            font-weight="800" font-size="36" fill="url(#gWord)" letter-spacing="2">PHYSIQUE</text>
       <text x="140" y="145" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-weight="700"
             font-size="12" fill="#8FB3CC" letter-spacing="7">F L A S H</text>
     </svg>
@@ -128,7 +129,7 @@
       <span class="bump" id="b0"></span><span class="bump" id="b1"></span><span class="bump" id="b2"></span>
       <span class="multi" id="multi">×2</span>
     </div>
-    <div class="question" id="qcard">
+    <div class="question" id="qcard" aria-live="polite">
       <div class="q-tag" id="qtag">Mouvement</div>
       <div class="q-text" id="qtext">La bille roule le long de la règle : quel mouvement ?</div>
     </div>
