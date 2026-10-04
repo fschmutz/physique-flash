@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Physique Flash</title>
+<meta name="description" content="Arcade de physique 6ème dans le navigateur. Trajectoires et vitesse. Rien n'est envoyé.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Physique Flash">
+<meta name="theme-color" content="#06182B">
+<meta name="color-scheme" content="dark">
+<meta name="format-detection" content="telephone=no">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; worker-src 'self'; connect-src 'self'; img-src 'self'; media-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:title" content="Physique Flash">
+<meta property="og:description" content="Trajectoires et vitesse. 60 secondes.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<a class="skip" href="#who">Aller au jeu</a>
+<noscript><p class="noscript-msg">Cette page a besoin de JavaScript pour poser les questions.</p></noscript>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<div class="cabinet">
+  <div class="update hide" id="updateBanner" role="status">
+    <span>Une nouvelle version est sur le serveur.</span>
+    <button type="button" class="ghost" id="reloadBtn">Recharger la dernière version</button>
+  </div>
+
+  <div class="marquee">
+    <button type="button" class="mute" id="mute" aria-label="Couper le son">🔊</button>
+
+    <svg class="logo" viewBox="0 0 280 150" role="img" aria-label="Physique Flash">
+      <defs>
+        <linearGradient id="gWord" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#2BD9D2"/>
+          <stop offset="50%" stop-color="#7FD4FF"/>
+          <stop offset="100%" stop-color="#FFC93C"/>
+        </linearGradient>
+        <linearGradient id="gBall" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#FFC93C"/>
+          <stop offset="100%" stop-color="#FF5C7A"/>
+        </linearGradient>
+      </defs>
+
+      <!-- les trois trajectoires du cours -->
+      <g fill="none" stroke-width="3" stroke-linecap="round">
+        <path d="M18 86 H78" stroke="#7FD4FF" stroke-dasharray="7 6"/>
+        <circle cx="140" cy="62" r="27" stroke="#2BD9D2" stroke-dasharray="7 6"/>
+        <path d="M196 92 q24 -58 60 -8" stroke="#FFC93C" stroke-dasharray="7 6"/>
+      </g>
+      <circle class="ball" cx="78" cy="86" r="8" fill="url(#gBall)"/>
+      <circle cx="140" cy="35" r="7" fill="#2BD9D2"/>
+      <circle cx="256" cy="84" r="7" fill="#FFC93C"/>
+
+      <text x="140" y="128" text-anchor="middle" font-family="Impact, Haettenschweiler, sans-serif"
+            font-size="36" fill="url(#gWord)" letter-spacing="2">PHYSIQUE</text>
+      <text x="140" y="145" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-weight="700"
+            font-size="12" fill="#8FB3CC" letter-spacing="7">F L A S H</text>
+    </svg>
+
+    <p id="tagline">Le chrono tourne. À toi de jouer, Paloma !</p>
+  </div>
+
+  <section class="panel" id="who">
+    <p class="eyebrow">Qui joue aujourd'hui ?</p>
+    <input class="field" id="pname" type="text" maxlength="14" autocomplete="off"
+           spellcheck="false" placeholder="Ton prénom" value="Paloma">
+    <p class="hint">Programme de 6ème : trajectoires et vitesse, un cran au-dessus de la fiche.</p>
+    <button type="button" class="play-btn" id="toSetup">C'EST PARTI</button>
+  </section>
+
+  <section class="panel hide" id="setup">
+    <p class="eyebrow">1 — Choisis ton entraînement</p>
+    <div class="chips" id="modes">
+      <button type="button" class="chip" data-mode="traj" aria-pressed="true">
+        <span>Trajectoires</span><small>rectiligne, circulaire, quelconque</small>
+      </button>
+      <button type="button" class="chip" data-mode="vitesse" aria-pressed="false">
+        <span>Vitesse</span><small>V = d / t, en m/s et en km/h</small>
+      </button>
+      <button type="button" class="chip" data-mode="conv" aria-pressed="false">
+        <span>Conversions</span><small>km → m, h → s, min → s, km/h → m/s</small>
+      </button>
+      <button type="button" class="chip" data-mode="mix" aria-pressed="false">
+        <span>Mélange</span><small>les trois, sans prévenir</small>
+      </button>
+    </div>
+
+    <p class="eyebrow spaced">2 — Niveau</p>
+    <div class="chips" id="diffs">
+      <button type="button" class="chip" data-diff="facile" aria-pressed="false">
+        <span>🙂 Tranquille</span><small>nombres faciles, 2 s de pénalité</small>
+      </button>
+      <button type="button" class="chip" data-diff="moyen" aria-pressed="true">
+        <span>😃 6ème</span><small>le niveau de la fiche, 3 s de pénalité</small>
+      </button>
+      <button type="button" class="chip wide" data-diff="expert" aria-pressed="false">
+        <span>🤩 Expert</span><small>décimaux, minutes à convertir, 4 s de pénalité, points doublés</small>
+      </button>
+    </div>
+
+    <p class="eyebrow spaced">3 — Durée de la manche</p>
+    <div class="row-3" id="durs">
+      <button type="button" class="chip" data-dur="45" aria-pressed="false">45 s</button>
+      <button type="button" class="chip" data-dur="60" aria-pressed="true">60 s</button>
+      <button type="button" class="chip" data-dur="120" aria-pressed="false">2 min</button>
+    </div>
+
+    <button type="button" class="play-btn" id="start">JOUER</button>
+    <button type="button" class="ghost" id="changePlayer">Changer de joueur</button>
+  </section>
+
+  <section class="panel hide" id="play">
+    <div class="hud">
+      <div class="hud-box"><div class="hud-label">Temps</div><div class="hud-val time" id="time">60</div></div>
+      <div class="hud-box"><div class="hud-label">Score</div><div class="hud-val" id="score">0</div></div>
+    </div>
+    <div class="chrono"><progress id="bar" max="1000" value="1000"></progress></div>
+    <div class="bumpers">
+      <span class="lvl" id="lvl">Palier 1</span>
+      <span class="bump" id="b0"></span><span class="bump" id="b1"></span><span class="bump" id="b2"></span>
+      <span class="multi" id="multi">×2</span>
+    </div>
+    <div class="question" id="qcard">
+      <div class="q-tag" id="qtag">Mouvement</div>
+      <div class="q-text" id="qtext">La bille roule le long de la règle : quel mouvement ?</div>
+    </div>
+    <div class="answer empty" id="ans">Tape ta réponse</div>
+    <div class="choices hide" id="choices" role="group" aria-label="Touche la bonne réponse"></div>
+    <div class="pad" id="pad">
+      <button type="button" class="key" data-k="1">1</button><button type="button" class="key" data-k="2">2</button><button type="button" class="key" data-k="3">3</button>
+      <button type="button" class="key fn" data-k="del" aria-label="Effacer">⌫</button>
+      <button type="button" class="key" data-k="4">4</button><button type="button" class="key" data-k="5">5</button><button type="button" class="key" data-k="6">6</button>
+      <button type="button" class="key fn" data-k="," aria-label="Virgule">,</button>
+      <button type="button" class="key" data-k="7">7</button><button type="button" class="key" data-k="8">8</button><button type="button" class="key" data-k="9">9</button>
+      <button type="button" class="key go" data-k="ok">OK</button>
+      <button type="button" class="key zero" data-k="0">0</button>
+    </div>
+    <button type="button" class="linkish quit" id="quit">Arrêter la manche</button>
+  </section>
+
+  <section class="panel hide" id="over">
+    <div class="celeb hide" id="celeb">
+      <span class="icon" id="celebIcon">🎆</span>
+      <b id="celebTitle"></b>
+      <em id="celebSub"></em>
+    </div>
+    <div class="score-big" id="finalScore">0</div>
+    <div class="score-cap" id="finalCap">points</div>
+    <div class="stats">
+      <div class="stat"><b id="sGood">0</b><span>justes</span></div>
+      <div class="stat"><b id="sAcc">0%</b><span>réussite</span></div>
+      <div class="stat"><b id="sSpeed">0,0s</b><span>par question</span></div>
+    </div>
+    <div class="challenge">
+      <p class="eyebrow flush">Cette manche</p>
+      <div class="tags" id="chalTags"></div>
+      <ul class="fams" id="famList"></ul>
+    </div>
+    <p class="praise" id="praise"></p>
+    <div class="recap hide" id="recap">
+      <p class="eyebrow flush">À revoir tranquillement</p>
+      <ul id="recapList"></ul>
+    </div>
+    <button type="button" class="play-btn" id="again">REJOUER</button>
+    <button type="button" class="ghost hide" id="retry">Rejouer les erreurs</button>
+    <button type="button" class="ghost" id="back">Changer d'entraînement</button>
+  </section>
+</div>
+
+<footer class="foot">
+  <p class="ver">version <span id="verNum"></span>
+  · <button type="button" class="linkish" id="reloadLatest">Recharger la dernière version</button></p>
+  <p>Rien n'est envoyé. Pas de compte, pas de pub.</p>
+</footer>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
