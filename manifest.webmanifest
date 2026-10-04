@@ -1,0 +1,19 @@
+{
+  "name": "Physique Flash",
+  "short_name": "Physique Flash",
+  "description": "Arcade de physique 6ème dans le navigateur. Trajectoires et vitesse. Rien n'est envoyé.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#06182B",
+  "theme_color": "#06182B",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
